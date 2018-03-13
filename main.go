@@ -1,4 +1,4 @@
-package SwedBank
+package Swedbank
 
 import (
 	"fmt"
