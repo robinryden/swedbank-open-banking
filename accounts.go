@@ -1,15 +1,13 @@
 package swedbank
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
 	"net/http"
 )
 
 var (
 	client   = &http.Client{}
-	accounts = "https://psd2.api.swedbank.com/sandbox/v1/accounts/?BIC=SANDSESS"
+	accounts = "https://psd2.api.swedbank.com/sandbox/v1/accounts"
 )
 
 type Accounts struct {
@@ -22,18 +20,19 @@ type Accounts struct {
 }
 
 // This lists all payment accounts on the user
-func Get(acc *Accounts) {
-	serilizedPayload, err := json.Marshal(acc)
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	payload, err := http.NewRequest("GET", accounts, bytes.NewBuffer(serilizedPayload))
-	resp, err := client.Do(payload)
+func Get(acc *Accounts) int {
+	payload, err := http.Get(accounts)
+	payload.Header.Add("BIC", acc.BIC)
+	payload.Header.Add("Authorization", acc.Authorization)
+	payload.Header.Add("Process-ID", acc.ProcessID)
+	payload.Header.Add("Request-ID", acc.RequestID)
+	payload.Header.Add("Date", acc.Date)
 
 	if err != nil {
 		fmt.Println("Error occured while trying to fetch from", accounts)
 	}
 
-	defer resp.Body.Close()
+	defer payload.Body.Close()
+
+	return payload.StatusCode
 }
