@@ -15,6 +15,7 @@ var (
 	client = &http.Client{}
 )
 
+// Accounts
 type SingleAccount struct {
 	ID            string
 	BIC           string
@@ -31,6 +32,10 @@ type Accounts struct {
 	ProcessID     string
 }
 
+type AccountList struct {
+	List []Account `json:"account_list"`
+}
+
 type Account struct {
 	ID             string               `json:"id"`
 	Currency       string               `json:"currency"`
@@ -44,10 +49,6 @@ type Account struct {
 	Balances       []map[string]Balance `json:"balances"`
 }
 
-type AccountList struct {
-	List []Account `json:"account_list"`
-}
-
 type Balance struct {
 	Amount Amount `json:"amount"`
 	Date   string `json:"date"`
@@ -56,6 +57,14 @@ type Balance struct {
 type Amount struct {
 	Currency string  `json:"currency"`
 	Content  float64 `json:"content"`
+}
+
+// Transactions
+type TransactionList struct {
+	List []Transaction `json:"transactions"`
+}
+
+type Transaction struct {
 }
 
 // GetAccounts ...
@@ -74,7 +83,6 @@ func GetAccounts(acc *Accounts) (*AccountList, error) {
 	}
 
 	defer req.Body.Close()
-
 	decoder := json.NewDecoder(req.Body)
 
 	if err != nil {
@@ -120,4 +128,10 @@ func GetAccount(acc *SingleAccount) (*Account, error) {
 	}
 
 	return &account, nil
+}
+
+// GetTransactions ...
+// Fetch transactions from the account
+func GetTransactions() {
+
 }
