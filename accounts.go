@@ -6,9 +6,12 @@ import (
 	"net/http"
 )
 
-var (
-	client   = &http.Client{}
+const (
 	accounts = "https://psd2.api.swedbank.com/sandbox/v1/accounts/?bic=SANDSESS"
+)
+
+var (
+	client = &http.Client{}
 )
 
 type Accounts struct {
@@ -68,12 +71,12 @@ func Get(acc *Accounts) (*AccountList, error) {
 		return nil, err
 	}
 
-	test := AccountList{}
-	err = decoder.Decode(&test)
+	accountList := AccountList{}
+	err = decoder.Decode(&accountList)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return &test, nil
+	return &accountList, nil
 }
