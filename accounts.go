@@ -8,11 +8,20 @@ import (
 
 const (
 	accounts = "https://psd2.api.swedbank.com/sandbox/v1/accounts/?bic=SANDSESS"
+	account  = "https://psd2.api.swedbank.com/sandbox/v1/accounts/"
 )
 
 var (
 	client = &http.Client{}
 )
+
+type SingleAccount struct {
+	ID            string
+	BIC           string
+	RequestID     string
+	ProcessID     string
+	Authorization string
+}
 
 type Accounts struct {
 	WithBalance   bool
@@ -49,8 +58,9 @@ type Amount struct {
 	Content  float64 `json:"content"`
 }
 
+// GetAccounts ...
 // This lists all payment accounts on the user
-func Get(acc *Accounts) (*AccountList, error) {
+func GetAccounts(acc *Accounts) (*AccountList, error) {
 	payload, err := http.NewRequest("GET", accounts, nil)
 	payload.Header.Add("Authorization", acc.Authorization)
 	payload.Header.Add("Process-ID", acc.ProcessID)
@@ -79,4 +89,35 @@ func Get(acc *Accounts) (*AccountList, error) {
 	}
 
 	return &accountList, nil
+}
+
+// GetAccount ...
+// This lists a single payment account on the user
+func GetAccount(acc *SingleAccount) (*Account, error) {
+	payload, err := http.NewRequest("GET", account+acc.ID+"?bic="+acc.BIC, nil)
+	payload.Header.Add("Process-ID", acc.ProcessID)
+	payload.Header.Add("Request-ID", acc.RequestID)
+	payload.Header.Add("Authorization", acc.Authorization)
+
+	req, err := client.Do(payload)
+
+	if err != nil {
+		fmt.Println("Error occured while trying to fetch from", account)
+	}
+
+	defer req.Body.Close()
+	decoder := json.NewDecoder(req.Body)
+
+	if err != nil {
+		return nil, err
+	}
+
+	account := Account{}
+	err = decoder.Decode(&account)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &account, nil
 }
