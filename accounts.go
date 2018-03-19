@@ -7,8 +7,7 @@ import (
 )
 
 const (
-	accounts = "https://psd2.api.swedbank.com/sandbox/v1/accounts/?bic=SANDSESS"
-	account  = "https://psd2.api.swedbank.com/sandbox/v1/accounts/"
+	accountAPI = "https://psd2.api.swedbank.com/sandbox/v1/accounts/"
 )
 
 var (
@@ -25,6 +24,7 @@ type SingleAccount struct {
 }
 
 type Accounts struct {
+	BIC           string
 	WithBalance   bool
 	Date          string
 	Authorization string
@@ -59,25 +59,10 @@ type Amount struct {
 	Content  float64 `json:"content"`
 }
 
-// Transactions
-type TransactionList struct {
-	List []map[string]Transaction `json:"transactions"`
-}
-
-type Transaction struct {
-	CreditDebit           string               `json:"credit_debit"`
-	Amount                Amount               `json:"amount"`
-	BookingDate           string               `json:"booking_date"`
-	TransactionDate       string               `json:"transaction_date"`
-	ValueDate             string               `json:"value_date"`
-	RemittanceInformation string               `json:"remittance_information"`
-	Balances              []map[string]Balance `json:"balances"`
-}
-
 // GetAccounts ...
 // This lists all payment accounts on the user
 func GetAccounts(acc *Accounts) (*AccountList, error) {
-	payload, err := http.NewRequest("GET", accounts, nil)
+	payload, err := http.NewRequest("GET", accountAPI+"/?bic="+acc.BIC, nil)
 	payload.Header.Add("Authorization", acc.Authorization)
 	payload.Header.Add("Process-ID", acc.ProcessID)
 	payload.Header.Add("Request-ID", acc.RequestID)
@@ -86,7 +71,7 @@ func GetAccounts(acc *Accounts) (*AccountList, error) {
 	req, err := client.Do(payload)
 
 	if err != nil {
-		fmt.Println("Error occured while trying to fetch from", accounts)
+		fmt.Println("Error occured while trying to fetch from", accountAPI)
 	}
 
 	defer req.Body.Close()
@@ -109,7 +94,7 @@ func GetAccounts(acc *Accounts) (*AccountList, error) {
 // GetAccount ...
 // This lists a single payment account on the user
 func GetAccount(acc *SingleAccount) (*Account, error) {
-	payload, err := http.NewRequest("GET", account+acc.ID+"?bic="+acc.BIC, nil)
+	payload, err := http.NewRequest("GET", accountAPI+acc.ID+"?bic="+acc.BIC, nil)
 	payload.Header.Add("Process-ID", acc.ProcessID)
 	payload.Header.Add("Request-ID", acc.RequestID)
 	payload.Header.Add("Authorization", acc.Authorization)
@@ -117,7 +102,7 @@ func GetAccount(acc *SingleAccount) (*Account, error) {
 	req, err := client.Do(payload)
 
 	if err != nil {
-		fmt.Println("Error occured while trying to fetch from", account)
+		fmt.Println("Error occured while trying to fetch from", accountAPI)
 	}
 
 	defer req.Body.Close()
@@ -135,10 +120,4 @@ func GetAccount(acc *SingleAccount) (*Account, error) {
 	}
 
 	return &account, nil
-}
-
-// GetTransactions ...
-// Fetch transactions from the account
-func GetTransactions(acc *SingleAccount) (*TransactionList, error) {
-	return nil, nil
 }
