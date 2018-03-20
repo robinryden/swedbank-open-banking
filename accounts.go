@@ -18,6 +18,7 @@ var (
 type SingleAccount struct {
 	ID            string
 	BIC           string
+	WithBalance   bool
 	RequestID     string
 	ProcessID     string
 	Authorization string
@@ -27,9 +28,9 @@ type Accounts struct {
 	BIC           string
 	WithBalance   bool
 	Date          string
-	Authorization string
 	RequestID     string
 	ProcessID     string
+	Authorization string
 }
 
 type AccountList struct {
