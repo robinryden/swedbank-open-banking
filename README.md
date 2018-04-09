@@ -11,7 +11,7 @@ This is a work in progress package written in Go that uses the Swedbank Open Ban
 All feedback is appreciated!
 
 ## Examples
-### following examples are used inside Sandbox mode
+Following examples are used inside Sandbox mode
 
 #### Get all accounts from user
 
