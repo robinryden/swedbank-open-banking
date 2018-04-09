@@ -6,6 +6,10 @@ Go package for Swedbanks Open Banking API
 
 [Developer Documentation for Swedbank Open Banking Sandbox (BETA)](https://www.swedbank.se/idc/groups/public/@i/@sc/@all/@kp/documents/regulation/cid_2441155.pdf)
 
+### Good to know:
+This is a work in progress package written in Go that uses the Swedbank Open Banking API.
+All feedback is appreciated!
+
 ## Examples
 
 #### Get all accounts from user
